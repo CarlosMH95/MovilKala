@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="java">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/Dependencies/materiallogindemo-master/app/src/androidTest/java" />
+      <root url="file://$USER_HOME$/Dependencies/materiallogindemo-master/app/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
