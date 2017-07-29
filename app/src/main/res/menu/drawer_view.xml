@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_quotes"
+            android:icon="@drawable/ic_discuss"
+            android:title="@string/navigation_progreso" />
+        <item
+            android:id="@+id/nav_samples"
+            android:icon="@drawable/ic_forum"
+            android:title="@string/navigation_rutinas" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_action_settings"
+            android:title="@string/navigation_dietas" />
+    </group>
+
+    <item android:title="@string/navigation_mensajes">
+        <menu>
+            <item
+                android:icon="@drawable/ic_dashboard"
+                android:title="@string/navigation_opcion_1" />
+            <item
+                android:icon="@drawable/ic_dashboard"
+                android:title="@string/navigation_opcion_2" />
+        </menu>
+    </item>
+
+</menu>
