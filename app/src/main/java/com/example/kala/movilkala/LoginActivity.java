@@ -1,62 +1,164 @@
 package com.example.kala.movilkala;
-import android.app.Activity;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import android.content.Intent;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
-public class LoginActivity extends Activity  {
-    Button b1,b2;
-    EditText ed1,ed2;
+public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
+    private static final int REQUEST_SIGNUP = 0;
 
-    TextView tx1;
-    int counter = 3;
+    @InjectView(R.id.input_username)
+    EditText _usernameText;
+    @InjectView(R.id.input_password)
+    EditText _passwordText;
+    @InjectView(R.id.btn_login)
+    Button _loginButton;
+
+    SharedPreferences sharedPreferences;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        b1 = (Button)findViewById(R.id.button);
-        ed1 = (EditText)findViewById(R.id.editText);
-        ed2 = (EditText)findViewById(R.id.editText2);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if(getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        }
 
-        b2 = (Button)findViewById(R.id.button2);
-        tx1 = (TextView)findViewById(R.id.textView3);
-        tx1.setVisibility(View.GONE);
+        ButterKnife.inject(this);
 
-        b1.setOnClickListener(new View.OnClickListener() {
+        _loginButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                if(ed1.getText().toString().equals("admin") &&
-                        ed2.getText().toString().equals("admin")) {
-                    Toast.makeText(getApplicationContext(),
-                            "Redirecting...",Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getApplicationContext(), "Wrong Credentials",Toast.LENGTH_SHORT).show();
-                    tx1.setVisibility(View.VISIBLE);
-                    tx1.setBackgroundColor(Color.RED);
-                    counter--;
-                    tx1.setText(Integer.toString(counter));
+                login();
+            }
+        });
 
-                    if (counter == 0) {
-                        b1.setEnabled(false);
+        if(getApplicationContext() != null) {
+            sharedPreferences = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
+        }
+
+        /*_signupLink.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+                startActivityForResult(intent, REQUEST_SIGNUP);
+            }
+        });*/
+    }
+
+    public void login() {
+        Log.d(TAG, "Login");
+
+        /*if (!validate()) {
+            onLoginFailed();
+            return;
+        }*/
+
+        _loginButton.setEnabled(false);
+
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.Theme_AppCompat_DayNight_Dialog);//AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Autenticando...");
+        progressDialog.show();
+
+        String username = _usernameText.getText().toString();
+        String password = _passwordText.getText().toString();
+
+        // TODO: Implement your own authentication logic here.
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // On complete call either onLoginSuccess or onLoginFailed
+                        onLoginSuccess();
+                        // onLoginFailed();
+                        progressDialog.dismiss();
                     }
-                }
-            }
-        });
+                }, 3000);
+    }
 
-        b2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SIGNUP) {
+            if (resultCode == RESULT_OK) {
+
+                // TODO: Implement successful signup logic here
+                // By default we just finish the Activity and log them in automatically
+                this.finish();
             }
-        });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // disable going back to the MainActivity
+        moveTaskToBack(true);
+    }
+
+    public void onLoginSuccess() {
+        _loginButton.setEnabled(true);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("key", "value");
+        editor.commit();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        //intent.putExtra("ID", ContactLoggedIn.getContact().getId());
+        //intent.putExtra("TYPE", "0");
+        startActivity(intent);
+
+        finish();
+    }
+
+    public void onLoginFailed() {
+        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+
+        _loginButton.setEnabled(true);
+    }
+
+    public boolean validate() {
+        boolean valid = true;
+
+        String email = _usernameText.getText().toString();
+        String password = _passwordText.getText().toString();
+
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _usernameText.setError("Ingrese un email válido");
+            valid = false;
+        } else {
+            _usernameText.setError(null);
+        }
+
+        if (password.isEmpty()) {
+            _passwordText.setError("Ingrese contraseña");
+            valid = false;
+        } else {
+            _passwordText.setError(null);
+        }
+
+        return valid;
     }
 }
-
