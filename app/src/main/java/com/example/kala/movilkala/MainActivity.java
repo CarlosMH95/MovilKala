@@ -32,17 +32,13 @@ public class MainActivity extends AppCompatActivity {
         }
         //setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //if you want to update the items at a later time it is recommended to keep it in a variable
+        buildDrawer(toolbar);
+    }
+
+    public void buildDrawer(Toolbar toolbar){
         PrimaryDrawerItem item1 = new PrimaryDrawerItem()
                 .withIdentifier(1)
                 .withName("Principal")
@@ -73,23 +69,24 @@ public class MainActivity extends AppCompatActivity {
         //create the drawer and remember the `Drawer` result object
         // Create the AccountHeader
         AccountHeader headerResult = new AccountHeaderBuilder()
-            .withActivity(this)
-            .withCompactStyle(true)
-            //.withTextColor(R.color.colorAccent)
-             .withHeaderBackground(R.color.colorAccent)
-            //.withHeaderBackground(R.mipmap.ic_launcher)
-            .addProfiles(
-                    new ProfileDrawerItem().withName("Mike Penz")
-                            .withEmail("mikepenz@gmail.com")
-                            .withIcon(getResources().getDrawable(R.drawable.material_drawer_badge))
-            )
-            .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                @Override
-                public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                    return false;
-                }
-            })
-            .build();
+                .withActivity(this)
+                .withCompactStyle(false)
+                //.withTextColor(R.color.colorAccent)
+                .withHeaderBackground(R.color.colorAccent)
+                //.withHeaderBackground(R.mipmap.ic_launcher)
+                .addProfiles(
+                        new ProfileDrawerItem()
+                                .withName("Mike Penz")
+                                .withEmail("mikepenz@gmail.com")
+                        //.withIcon(getResources().getDrawable(R.drawable.material_drawer_badge))
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
 
         Drawer result = new DrawerBuilder()
                 .withActivity(this)
@@ -97,12 +94,12 @@ public class MainActivity extends AppCompatActivity {
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
-                    item1,
-                    new DividerDrawerItem(),
-                    item2,
-                    item3,
-                    item4,
-                    item5
+                        item1,
+                        new DividerDrawerItem(),
+                        item2,
+                        item3,
+                        item4,
+                        item5
                 )
                 .addStickyDrawerItems(item6)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -118,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .build();
+        //result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
     }
 
 }
