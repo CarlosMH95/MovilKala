@@ -4,7 +4,9 @@ import models.PokemonFeed;
 import models.Result;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -12,6 +14,6 @@ import retrofit2.http.Query;
  */
 
 public interface RestClient {
-    @POST("autenticar")
-    Call<Result> autenticar(@Query("username") String username, @Query("password") String password);
+    @POST("api-token-auth/")
+    Call<String> autenticar(@Header("-a") String credencial);
 }

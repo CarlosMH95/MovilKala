@@ -39,6 +39,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import service.AuthenticationInterceptor;
+import service.RequestK;
 import service.RestClient;
 
 /**
@@ -58,10 +59,8 @@ public class CitaActivity extends AppCompatActivity implements
     private WeekView mWeekView;
 
     private static final String TAG = CitaActivity.class.getSimpleName();
-    public static final String BASE_URL = "http://192.168.0.3:8000/api/";
-    private static Retrofit.Builder builder = null;
     private static Retrofit retrofit = null;
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private RestClient restClient = null;
     //private RecyclerView recyclerView = null;
     // insert your themoviedb.org API KEY here
     private final static String API_KEY = "";
@@ -266,77 +265,21 @@ public class CitaActivity extends AppCompatActivity implements
 
     public void connectAndGetApiData() {
 
-        if(builder == null) {
-            builder = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create());
+
+        if(retrofit == null){
+            RequestK.init();
         }
 
-        if (retrofit == null) {
-            retrofit = builder.build();
-        }
-        RestClient restClient = retrofit.create(RestClient.class);
+        restClient = retrofit.create(RestClient.class);
                 //CitaActivity.createService(RestClient.class, "0987654321", "administrador1");
-                //
 
-        //Call<PokemonFeed> call = restClient.getData();
-        //String hashed = BCrypt.hashpw("administrador1", BCrypt.gensalt(12));
-        Call<Result> call = restClient.autenticar("0987654321", "administrador");
+        //Call<Result> call = restClient.autenticar("0987654321", "administrador");
 
 
-        call.enqueue(new Callback<Result>() {
-            @Override
-            public void onResponse(Call<Result> call, Response<Result> response) {
-                if(response.isSuccessful()) {
-                    Result data = response.body();
-                    Log.e(TAG, data.toString());
-                    Toast.makeText(getApplicationContext(), data.toString() , Toast.LENGTH_LONG).show();
-                }
-                else{
-                    Log.e(TAG, response.toString()+ " " + response.message() + " " + response.headers());
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Result> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error! " + t.toString() , Toast.LENGTH_LONG).show();
-                Log.e(TAG, t.toString());
-            }
-        });
     }
 
-    public static <S> S createService(Class<S> serviceClass) {
-        return createService(serviceClass, null, null);
-    }
 
-    public static <S> S createService(
-            Class<S> serviceClass, String username, String password) {
-        if (!TextUtils.isEmpty(username)
-                && !TextUtils.isEmpty(password)) {
-            String authToken = Credentials.basic(username, password);
-            Log.e(TAG, "authToken: "+authToken);
-            return createService(serviceClass, authToken);
-        }
-
-        return createService(serviceClass, null, null);
-    }
-
-    public static <S> S createService(
-            Class<S> serviceClass, final String authToken) {
-        if (!TextUtils.isEmpty(authToken)) {
-            AuthenticationInterceptor interceptor =
-                    new AuthenticationInterceptor(authToken);
-
-            if (!httpClient.interceptors().contains(interceptor)) {
-                httpClient.addInterceptor(interceptor);
-
-                builder.client(httpClient.build());
-                retrofit = builder.build();
-            }
-        }
-
-        return retrofit.create(serviceClass);
-    }
 
     public void buildDrawer(Toolbar toolbar){
         PrimaryDrawerItem item1 = new PrimaryDrawerItem()

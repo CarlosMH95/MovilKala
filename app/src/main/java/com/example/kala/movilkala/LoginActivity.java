@@ -17,6 +17,13 @@ import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import models.Result;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import service.RequestK;
+import service.RestClient;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -30,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     Button _loginButton;
 
     SharedPreferences sharedPreferences;
+
+    private static Retrofit retrofit = null;
+    private RestClient restClient = null;
 
 
     @Override
@@ -68,13 +78,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
-        Log.d(TAG, "Login");
+        Log.e(TAG, "Login");
 
-        /*if (!validate()) {
+        if (!validate()) {
             onLoginFailed();
             return;
-        }*/
-
+        }
+        Log.e(TAG, "OK 0.1");
         _loginButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
@@ -87,8 +97,42 @@ public class LoginActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
+        if(retrofit == null){
+            RequestK.init();
+            //restClient = retrofit.create(RestClient.class);
+            Log.e(TAG, "OK 1");
+            restClient = RequestK.createService(RestClient.class, "0987654321", "administrador1");
+            Log.e(TAG, "OK 2");
+            Call<String> call = restClient.autenticar("0987654321:administrador1");
+            Log.e(TAG, "OK 3");
 
-        new android.os.Handler().postDelayed(
+            Log.e(TAG, "OK 4 " + call.request().toString() + "_" + call.request().headers().toString());
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if(response.isSuccessful()) {
+                        String data = response.body();
+                        Log.e(TAG, data.toString());
+                        Toast.makeText(getApplicationContext(), data.toString() , Toast.LENGTH_LONG).show();
+                        progressDialog.dismiss();
+                        onLoginSuccess();
+                    }
+                    else{
+                        Log.e(TAG, response.toString()+ "_" + response.body() + "_"+response.message() + "_" + response.headers() + "_" + response.code());
+                        progressDialog.dismiss();
+                        onLoginFailed();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Error! " + t.toString() , Toast.LENGTH_LONG).show();
+                    Log.e(TAG, t.toString());
+                }
+            });
+        }
+
+        /*new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onLoginSuccess or onLoginFailed
@@ -96,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                         // onLoginFailed();
                         progressDialog.dismiss();
                     }
-                }, 3000);
+                }, 3000);*/
     }
 
 
@@ -142,11 +186,11 @@ public class LoginActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String email = _usernameText.getText().toString();
+        String username = _usernameText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _usernameText.setError("Ingrese un email válido");
+        if (username.isEmpty() || username.length() != 1) {
+            _usernameText.setError("Ingrese número de cédula válido");
             valid = false;
         } else {
             _usernameText.setError(null);
