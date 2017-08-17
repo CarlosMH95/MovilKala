@@ -27,10 +27,10 @@ import service.RestClient;
  */
 
 public class CitaActivity extends AppCompatActivity implements
-        WeekView.EventClickListener,
-        MonthLoader.MonthChangeListener,
-        WeekView.EventLongPressListener,
-        WeekView.EmptyViewLongPressListener {
+                                                            WeekView.EventClickListener,
+                                                            MonthLoader.MonthChangeListener,
+                                                            WeekView.EventLongPressListener,
+                                                            WeekView.EmptyViewLongPressListener {
     //private static final String TAG = "CitaActivity";
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
@@ -81,9 +81,6 @@ public class CitaActivity extends AppCompatActivity implements
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
         //setupDateTimeInterpreter(false);
-
-
-
     }
 
     @Override

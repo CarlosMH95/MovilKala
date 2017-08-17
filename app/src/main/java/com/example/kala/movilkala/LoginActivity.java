@@ -90,12 +90,9 @@ public class LoginActivity extends AppCompatActivity {
         // TODO: Implement your own authentication logic here.
         if(retrofit == null){
             RequestK.init();
-            restClient = RequestK.createService(RestClient.class, "0987654321", "administrador1");
-            Call<Token> callToken = restClient.getToken(username, password);
+            restClient = RequestK.createService(RestClient.class, username, password);
+            Call<Token> callToken = restClient.getToken("7777777770", "VqBBRy");
 
-            Log.e(TAG, "OK 4 " + callToken.request().toString() + "\n|" +
-                    callToken.request().headers().toString()+"\n|"+
-                    callToken.request().body().contentType().toString());
             callToken.enqueue(new Callback<Token>() {
                 @Override
                 public void onResponse(Call<Token> call, Response<Token> response) {

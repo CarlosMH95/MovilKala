@@ -39,7 +39,35 @@
             android:name=".CitaActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/title_activity_citas" >
+        </activity>
+
+        <activity
+            android:name=".DietaActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_dietas" >
+        </activity>
+
+        <activity
+            android:name=".RutinaActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_rutinas" >
+        </activity>
+
+        <activity
+            android:name=".MensajeActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_mensajes" >
+        </activity>
+
+        <activity
+            android:name=".ProgresoActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_progreso" >
         </activity>
 
     </application>

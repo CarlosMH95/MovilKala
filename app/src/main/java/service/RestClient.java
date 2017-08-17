@@ -23,4 +23,7 @@ public interface RestClient {
 
     @GET("usuario/datos/{token}/")
     Call<Usuario> getUsuario(@Path("token") String token);
+
+    @GET("plandieta/{id}/")
+    Call<String> getPlanesDieta(@Path("id") String cedula);
 }

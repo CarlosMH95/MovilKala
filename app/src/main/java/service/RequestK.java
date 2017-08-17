@@ -7,6 +7,7 @@ import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by HouSe on 15/08/2017.
@@ -24,7 +25,9 @@ public class RequestK {
         if(builder == null) {
             builder = new Retrofit.Builder()
                     .baseUrl(BASE_URL_PROD)
+                    //.addConverterFactory(ScalarsConverterFactory.create());
                     .addConverterFactory(GsonConverterFactory.create());
+
         }
 
         /*if (retrofit == null) {
