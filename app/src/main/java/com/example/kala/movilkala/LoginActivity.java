@@ -12,12 +12,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import models.Result;
+import models.Token;
+import models.Usuario;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     Button _loginButton;
 
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor sesion;
 
     private static Retrofit retrofit = null;
     private RestClient restClient = null;
@@ -64,27 +65,17 @@ public class LoginActivity extends AppCompatActivity {
 
         if(getApplicationContext() != null) {
             sharedPreferences = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
+            sesion = sharedPreferences.edit();
         }
-
-        /*_signupLink.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-            }
-        });*/
     }
 
     public void login() {
-        Log.e(TAG, "Login");
 
         if (!validate()) {
             onLoginFailed();
             return;
         }
-        Log.e(TAG, "OK 0.1");
+
         _loginButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
@@ -93,54 +84,80 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();
 
-        String username = _usernameText.getText().toString();
+        final String username = _usernameText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
         if(retrofit == null){
             RequestK.init();
-            //restClient = retrofit.create(RestClient.class);
-            Log.e(TAG, "OK 1");
             restClient = RequestK.createService(RestClient.class, "0987654321", "administrador1");
-            Log.e(TAG, "OK 2");
-            Call<String> call = restClient.autenticar("0987654321:administrador1");
-            Log.e(TAG, "OK 3");
+            Call<Token> callToken = restClient.getToken(username, password);
 
-            Log.e(TAG, "OK 4 " + call.request().toString() + "_" + call.request().headers().toString());
-            call.enqueue(new Callback<String>() {
+            Log.e(TAG, "OK 4 " + callToken.request().toString() + "\n|" +
+                    callToken.request().headers().toString()+"\n|"+
+                    callToken.request().body().contentType().toString());
+            callToken.enqueue(new Callback<Token>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+                public void onResponse(Call<Token> call, Response<Token> response) {
+
                     if(response.isSuccessful()) {
-                        String data = response.body();
-                        Log.e(TAG, data.toString());
-                        Toast.makeText(getApplicationContext(), data.toString() , Toast.LENGTH_LONG).show();
-                        progressDialog.dismiss();
-                        onLoginSuccess();
+                        Token data = response.body();
+                        Log.e(TAG, "Token: " + data.getToken());
+                        sesion.putString("token", data.getToken());
+
+                        //restClient = RequestK.createService(RestClient.class, data.getToken());
+                        Call<Usuario> callUsuario = restClient.getUsuario(data.getToken());
+
+                        callUsuario.enqueue(new Callback<Usuario>() {
+                            @Override
+                            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+
+                                if(response.isSuccessful()) {
+                                    Usuario usuario = response.body();
+
+                                    sesion.putString("nombre", usuario.getNombre());
+                                    sesion.putString("apellido", usuario.getApellido());
+                                    sesion.putString("cedula", usuario.getCedula());
+                                    sesion.putString("user_id", usuario.getUsuario());
+                                    sesion.commit();
+
+                                    Log.e(TAG, sesion.toString());
+                                    //Toast.makeText(getApplicationContext(), "Usuario: " + usuario.getUsuario() , Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                    onLoginSuccess();
+                                }
+                                else{
+                                    progressDialog.dismiss();
+                                    onLoginFailed();
+                                }
+
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<Usuario> call, Throwable t) {
+                                progressDialog.dismiss();
+                                onLoginFailed();
+
+                            }
+                        });
+
                     }
                     else{
-                        Log.e(TAG, response.toString()+ "_" + response.body() + "_"+response.message() + "_" + response.headers() + "_" + response.code());
                         progressDialog.dismiss();
                         onLoginFailed();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Error! " + t.toString() , Toast.LENGTH_LONG).show();
+                public void onFailure(Call<Token> call, Throwable t) {
                     Log.e(TAG, t.toString());
+
+                    progressDialog.dismiss();
+                    onLoginFailed();
                 }
             });
         }
-
-        /*new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);*/
     }
 
 
@@ -165,9 +182,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("key", "value");
-        editor.commit();
+
 
         Intent intent = new Intent(this, MainActivity.class);
         //intent.putExtra("ID", ContactLoggedIn.getContact().getId());
@@ -183,13 +198,14 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(true);
     }
 
+
     public boolean validate() {
         boolean valid = true;
 
         String username = _usernameText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (username.isEmpty() || username.length() != 1) {
+        if (username.isEmpty() || username.length() != 10) {
             _usernameText.setError("Ingrese número de cédula válido");
             valid = false;
         } else {

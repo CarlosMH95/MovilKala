@@ -14,7 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RequestK {
     private static final String TAG = "RequestK";
-    private static final String BASE_URL = "http://192.168.0.3:8000/api/";
+    private static final String BASE_URL_DESA = "http://192.168.0.3:8000/api/";
+    private static final String BASE_URL_PROD = "http://kalafitness.pythonanywhere.com/api/";
     private static Retrofit.Builder builder = null;
     private static Retrofit retrofit = null;
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -22,7 +23,7 @@ public class RequestK {
     public static void init(){
         if(builder == null) {
             builder = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(BASE_URL_PROD)
                     .addConverterFactory(GsonConverterFactory.create());
         }
 
@@ -33,7 +34,6 @@ public class RequestK {
     }
 
     public static <S> S createService(Class<S> serviceClass) {
-        Log.e(TAG, "OK 1.1");
         return createService(serviceClass, null, null);
     }
 
@@ -43,8 +43,6 @@ public class RequestK {
             Log.e(TAG, "authToken: "+authToken);
             return createService(serviceClass, authToken);
         }
-        Log.e(TAG, "OK 1.2");
-        System.out.println("XYZ: "+password);
         return null; //createService(serviceClass, null, null);
     }
 
@@ -59,7 +57,6 @@ public class RequestK {
                 retrofit = builder.build();
             }
         }
-        Log.e(TAG, "OK 1.3");
         return retrofit.create(serviceClass);
     }
 }

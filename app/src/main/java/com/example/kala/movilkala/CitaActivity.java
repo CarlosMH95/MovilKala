@@ -1,44 +1,24 @@
 package com.example.kala.movilkala;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import models.PokemonFeed;
-import models.Result;
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import resource.DrawerK;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import service.AuthenticationInterceptor;
 import service.RequestK;
 import service.RestClient;
 
@@ -64,6 +44,8 @@ public class CitaActivity extends AppCompatActivity implements
     //private RecyclerView recyclerView = null;
     // insert your themoviedb.org API KEY here
     private final static String API_KEY = "";
+    private Drawer drawer = null;
+    SharedPreferences sesion;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,6 +54,13 @@ public class CitaActivity extends AppCompatActivity implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
+
+
+        if(getApplicationContext() != null) {
+            sesion = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
+        }
+
+        drawer = DrawerK.initDrawer(this, CitaActivity.class, toolbar);
 
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
@@ -93,7 +82,6 @@ public class CitaActivity extends AppCompatActivity implements
         // the week view. This is optional.
         //setupDateTimeInterpreter(false);
 
-        buildDrawer(toolbar);
 
 
     }
@@ -245,7 +233,8 @@ public class CitaActivity extends AppCompatActivity implements
     }
 
     protected String getEventTitle(Calendar time) {
-        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH) + 1, time.get(Calendar.DAY_OF_MONTH));
+        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY),
+                time.get(Calendar.MINUTE), time.get(Calendar.MONTH) + 1, time.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
@@ -255,109 +244,10 @@ public class CitaActivity extends AppCompatActivity implements
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        connectAndGetApiData();
     }
 
     @Override
     public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
 
-    }
-
-    public void connectAndGetApiData() {
-
-
-        if(retrofit == null){
-            RequestK.init();
-        }
-
-        restClient = retrofit.create(RestClient.class);
-                //CitaActivity.createService(RestClient.class, "0987654321", "administrador1");
-
-        //Call<Result> call = restClient.autenticar("0987654321", "administrador");
-
-
-
-    }
-
-
-
-    public void buildDrawer(Toolbar toolbar){
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem()
-                .withIdentifier(1)
-                .withName("Principal")
-                .withIcon(R.drawable.ic_menu_send);
-
-        SecondaryDrawerItem item2 = new SecondaryDrawerItem()
-                .withIdentifier(2)
-                .withName("Mis Rutinas")
-                .withIcon(R.drawable.ic_menu_camera);
-
-        SecondaryDrawerItem item3 = new SecondaryDrawerItem()
-                .withIdentifier(3)
-                .withName("Mis Dietas")
-                .withIcon(R.drawable.ic_menu_manage);
-
-        SecondaryDrawerItem item4 = new SecondaryDrawerItem()
-                .withIdentifier(4)
-                .withName("Mis Mensajes")
-                .withIcon(R.drawable.ic_menu_slideshow);
-
-        SecondaryDrawerItem item5 = new SecondaryDrawerItem()
-                .withIdentifier(7)
-                .withName("Separar cita")
-                .withIcon(R.drawable.material_drawer_badge);
-
-        PrimaryDrawerItem item6 = new PrimaryDrawerItem()
-                .withName("Salir");
-        //create the drawer and remember the `Drawer` result object
-        // Create the AccountHeader
-        AccountHeader headerResult = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withCompactStyle(false)
-                //.withTextColor(R.color.colorAccent)
-                .withHeaderBackground(R.color.colorAccent)
-                //.withHeaderBackground(R.mipmap.ic_launcher)
-                .addProfiles(
-                        new ProfileDrawerItem()
-                                .withName("Mike Penz")
-                                .withEmail("mikepenz@gmail.com")
-                        //.withIcon(getResources().getDrawable(R.drawable.material_drawer_badge))
-                )
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                })
-                .build();
-
-        Drawer result = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .withTranslucentStatusBar(false)
-                .withAccountHeader(headerResult)
-                .addDrawerItems(
-                        item1,
-                        new DividerDrawerItem(),
-                        item2,
-                        item3,
-                        item4,
-                        item5
-                )
-                .addStickyDrawerItems(item6)
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if(drawerItem.getIdentifier() == 7L){
-
-                            startActivity(new Intent(CitaActivity.this, MainActivity.class));
-                            //finish();
-                            return true;
-                        }
-                        return false;
-                    }
-                })
-                .build();
-        //result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
     }
 }

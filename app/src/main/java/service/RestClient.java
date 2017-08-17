@@ -1,19 +1,26 @@
 package service;
 
-import models.PokemonFeed;
-import models.Result;
+import models.Token;
+import models.Usuario;
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Created by HouSe on 13/08/2017.
  */
 
 public interface RestClient {
+    @FormUrlEncoded
     @POST("api-token-auth/")
-    Call<String> autenticar(@Header("-a") String credencial);
+    Call<Token> getToken(@Field("username") String username,
+                           @Field("password") String password);
+
+    @GET("usuario/datos/{token}/")
+    Call<Usuario> getUsuario(@Path("token") String token);
 }

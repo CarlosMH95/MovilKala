@@ -42,7 +42,6 @@
             android:label="@string/app_name" >
         </activity>
 
-        <activity android:name=".SignupActivity" android:theme="@style/AppTheme.Dark" />
     </application>
     <!--application
         android:allowBackup="true"
