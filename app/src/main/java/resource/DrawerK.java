@@ -70,8 +70,11 @@ public class DrawerK {
                 .withIcon(R.drawable.material_drawer_badge);
 
         PrimaryDrawerItem item7 = new PrimaryDrawerItem()
-                .withName("Salir")
+                .withName("Cerrar sesión")
                 .withIdentifier(7);
+        PrimaryDrawerItem item8 = new PrimaryDrawerItem()
+                .withName("Salir")
+                .withIdentifier(8);
 
         //create the drawer and remember the `Drawer` result object
         // Create the AccountHeader
@@ -101,16 +104,8 @@ public class DrawerK {
                 .withToolbar(toolbar)
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
-                .addDrawerItems(
-                        item1,
-                        new DividerDrawerItem(),
-                        item2,
-                        item3,
-                        item4,
-                        item5,
-                        item6
-                )
-                .addStickyDrawerItems(item7)
+                .addDrawerItems( item1, new DividerDrawerItem(), item2, item3, item4, item5, item6 )
+                .addStickyDrawerItems(item7, item8)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     //final Drawer drawer = getClass();
                     @Override
@@ -145,10 +140,15 @@ public class DrawerK {
                             if(activity.getApplicationContext() != null) {
                                 activity.getApplicationContext().getSharedPreferences("user_sesion",
                                         Context.MODE_PRIVATE).edit().clear().commit();
-                                activity.startActivity(new Intent(activity, SplashActivity.class));
                                 activity.finishAffinity();
+                                activity.startActivity(new Intent(activity, SplashActivity.class));
                                 return true;
                             }
+                        }
+                        else if(drawerItem.getIdentifier() == 8L){
+                            activity.finishAffinity();
+                            System.exit(0);
+                            return true;
                         }
                         return false;
                     }
