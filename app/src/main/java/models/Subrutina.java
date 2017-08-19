@@ -17,30 +17,27 @@ public class Subrutina {
     @SerializedName("actualizado")
     @Expose
     private String actualizado;
-    @SerializedName("dia")
+    @SerializedName("descanso")
     @Expose
-    private String dia;
-    @SerializedName("desayuno")
+    private String descanso;
+    @SerializedName("detalle")
     @Expose
-    private String desayuno;
-    @SerializedName("colacion1")
+    private String detalle;
+    @SerializedName("link")
     @Expose
-    private String colacion1;
-    @SerializedName("almuerzo")
+    private String link;
+    @SerializedName("nombre")
     @Expose
-    private String almuerzo;
-    @SerializedName("colacion2")
+    private String nombre;
+    @SerializedName("repeticiones")
     @Expose
-    private String colacion2;
-    @SerializedName("cena")
+    private String repeticiones;
+    @SerializedName("veces")
     @Expose
-    private String cena;
+    private String veces;
     @SerializedName("estado")
     @Expose
     private String estado;
-    @SerializedName("dieta")
-    @Expose
-    private int dieta;
 
     public int getId() {
         return id;
@@ -66,52 +63,52 @@ public class Subrutina {
         this.actualizado = actualizado;
     }
 
-    public String getDia() {
-        return dia;
+    public String getDescanso() {
+        return descanso;
     }
 
-    public void setDia(String dia) {
-        this.dia = dia;
+    public void setdescanso(String descanso) {
+        this.descanso = descanso;
     }
 
-    public String getDesayuno() {
-        return desayuno;
+    public String getDetalle() {
+        return detalle;
     }
 
-    public void setDesayuno(String desayuno) {
-        this.desayuno = desayuno;
+    public void setDetalle(String detalle) {
+        this.detalle = detalle;
     }
 
-    public String getColacion1() {
-        return colacion1;
+    public String getLink() {
+        return link;
     }
 
-    public void setColacion1(String colacion1) {
-        this.colacion1 = colacion1;
+    public void setLink(String link) {
+        this.link = link;
     }
 
-    public String getAlmuerzo() {
-        return almuerzo;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setAlmuerzo(String almuerzo) {
-        this.almuerzo = almuerzo;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getColacion2() {
-        return colacion2;
+    public String getRepeticiones() {
+        return repeticiones;
     }
 
-    public void setColacion2(String colacion2) {
-        this.colacion2 = colacion2;
+    public void setRepeticiones(String repeticiones) {
+        this.repeticiones = repeticiones;
     }
 
-    public String getCena() {
-        return cena;
+    public String getVeces() {
+        return veces;
     }
 
-    public void setCena(String cena) {
-        this.cena = cena;
+    public void setVeces(String veces) {
+        this.veces = veces;
     }
 
     public String getEstado() {
@@ -122,24 +119,18 @@ public class Subrutina {
         this.estado = estado;
     }
 
-    public int getDieta() {
-        return dieta;
-    }
-
-    public void setDieta(int dieta) {
-        this.dieta = dieta;
-    }
 
     @Override
     public String toString() {
         return "Subrutina{" +
                 "id=" + id +
-                ", dia='" + dia + '\'' +
-                ", desayuno='" + desayuno + '\'' +
-                ", colacion1='" + colacion1 + '\'' +
-                ", almuerzo='" + almuerzo + '\'' +
-                ", colacion2='" + colacion2 + '\'' +
-                ", cena='" + cena + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", detalle='" + detalle + '\'' +
+                ", descanso='" + descanso + '\'' +
+                ", repeticiones='" + repeticiones + '\'' +
+                ", veces='" + veces + '\'' +
+                ", descanso='" + descanso + '\'' +
+                ", link='" + link + '\'' +
                 '}';
     }
 }

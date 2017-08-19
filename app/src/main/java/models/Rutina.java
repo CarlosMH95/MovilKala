@@ -14,7 +14,7 @@ public class Rutina {
     @SerializedName("condiciones_previas")
     @Expose
     private String condicionesPrevias;
-    @SerializedName("plan_diario")
+    @SerializedName("subrutina")
     @Expose
     private List<Subrutina> subrutina = null;
 
@@ -44,10 +44,10 @@ public class Rutina {
 
     @Override
     public String toString() {
-        return "Dieta{" +
+        return "Rutina{" +
                 "id=" + id +
                 ", condicionesPrevias='" + condicionesPrevias + '\'' +
-                ", planDiario=" + subrutina +
+                ", subrutina=" + subrutina +
                 '}';
     }
 }
