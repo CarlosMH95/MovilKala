@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import models.Dieta;
 import models.Token;
 import models.Usuario;
 import resource.DrawerK;
@@ -64,16 +65,20 @@ public class DietaActivity extends AppCompatActivity {
         progressDialog.show();
 
         RequestK.init();
-        restClient = RequestK.createService(RestClient.class, sesion.getString("token", ""));
-        Call<String> call = restClient.getPlanesDieta(sesion.getString("46", ""));
+        restClient = RequestK.createService(RestClient.class, sesion.getString("token", ""), false);
+        Call<List<Dieta>> call = restClient.getDietas(sesion.getString("cedula", ""));
 
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new Callback<List<Dieta>>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<List<Dieta>> call, Response<List<Dieta>> response) {
 
                 if(response.isSuccessful()) {
-                    String data = response.body();
-                    Log.e(TAG, data.toString());
+                    List<Dieta> data = response.body();
+
+                    for(Dieta dieta : data){
+
+                        Log.e(TAG, dieta.getId() + " "+ dieta.getCondicionesPrevias()+" "+dieta.getPlanDiario()+"");
+                    }
                     //Toast.makeText(getApplicationContext(), "Usuario: " + usuario.getUsuario() , Toast.LENGTH_LONG).show();
                     progressDialog.dismiss();
                     //onLoginSuccess();
@@ -87,18 +92,18 @@ public class DietaActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<List<Dieta>> call, Throwable t) {
                 Log.e(TAG, t.toString());
                 progressDialog.dismiss();
 
             }
         });
 
-        expandableListView = (ExpandableListView) findViewById(R.id.simple_expandable_listview);
+        //expandableListView = (ExpandableListView) findViewById(R.id.simple_expandable_listview);
         // Setting group indicator null for custom indicator
-        expandableListView.setGroupIndicator(null);
+        //expandableListView.setGroupIndicator(null);
 
-        setItems();
+        //setItems();
     //setListener();
         // Setting headers and childs to expandable listview
 

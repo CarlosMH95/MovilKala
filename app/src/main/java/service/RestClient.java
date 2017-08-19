@@ -1,5 +1,8 @@
 package service;
 
+import java.util.List;
+
+import models.Dieta;
 import models.Token;
 import models.Usuario;
 import retrofit2.Call;
@@ -24,6 +27,6 @@ public interface RestClient {
     @GET("usuario/datos/{token}/")
     Call<Usuario> getUsuario(@Path("token") String token);
 
-    @GET("plandieta/{id}/")
-    Call<String> getPlanesDieta(@Path("id") String cedula);
+    @GET("dietas/{cedula}/")
+    Call<List<Dieta>> getDietas(@Path("cedula") String cedula);
 }

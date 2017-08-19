@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Cédula"
                 android:inputType="text"
-                android:text="8888888880" />
+                android:text="7777777777" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
                 android:inputType="textPassword"
-                android:text="OhR9oX" />
+                android:text="T0Qmos" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton

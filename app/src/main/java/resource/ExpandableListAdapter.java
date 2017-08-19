@@ -88,13 +88,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         // icon
         if (isExpanded) {
             header_text.setTypeface(null, Typeface.BOLD);
-            header_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expandable_view_plus, 0);
+            header_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_icon_send, 0);
         } else {
             // If group is not expanded then change the text back into normal
             // and change the icon
 
             header_text.setTypeface(null, Typeface.NORMAL);
-            header_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expandable_view_chevron, 0);
+            header_text.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_gallery, 0);
         }
 
         return convertView;

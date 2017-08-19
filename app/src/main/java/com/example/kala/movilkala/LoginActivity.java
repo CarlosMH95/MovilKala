@@ -85,13 +85,13 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
         final String username = _usernameText.getText().toString();
-        String password = _passwordText.getText().toString();
+        final String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
         if(retrofit == null){
             RequestK.init();
             restClient = RequestK.createService(RestClient.class, username, password);
-            Call<Token> callToken = restClient.getToken("7777777770", "VqBBRy");
+            Call<Token> callToken = restClient.getToken(username, password);
 
             callToken.enqueue(new Callback<Token>() {
                 @Override
@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e(TAG, "Token: " + data.getToken());
                         sesion.putString("token", data.getToken());
 
-                        //restClient = RequestK.createService(RestClient.class, data.getToken());
+                        restClient = RequestK.createService(RestClient.class, data.getToken(), false);
                         Call<Usuario> callUsuario = restClient.getUsuario(data.getToken());
 
                         callUsuario.enqueue(new Callback<Usuario>() {
