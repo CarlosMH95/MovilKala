@@ -23,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
                     .getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
 
             if(sesion.contains("token")){
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                startActivity(new Intent(SplashActivity.this, ProgresoActivity.class));
                 //Toast.makeText(getApplicationContext(), "OK " + sesion.getString("token","_") , Toast.LENGTH_LONG).show();
             }
             else{

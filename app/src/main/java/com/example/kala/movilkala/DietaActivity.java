@@ -7,25 +7,21 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.ExpandableListView;
+import android.view.View;
+import android.widget.LinearLayout;
 
-import com.alamkanak.weekview.WeekView;
 import com.mikepenz.materialdrawer.Drawer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import models.Dieta;
-import models.Token;
-import models.Usuario;
+import models.PlanDiario;
 import resource.DrawerK;
-import resource.ExpandableListAdapter;
+import resource.ExpandableView;
+import resource.ExpandedListItemView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import service.RequestK;
 import service.RestClient;
 
@@ -36,9 +32,10 @@ import service.RestClient;
 public class DietaActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
     private Drawer drawer = null;
-
-    private ExpandableListView expandableListView;
-    private ExpandableListAdapter adapter;
+    private View expandableView = null;
+    private ExpandableView dietaExpandableView;
+    private ExpandableView planDiarioExpandableView;
+    private ExpandableView diasExpandableView;
 
     private RestClient restClient = null;
     SharedPreferences sesion;
@@ -49,19 +46,31 @@ public class DietaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dieta);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitle(R.string.title_activity_dietas);
+        toolbar.inflateMenu(R.menu.view_update);
 
+        View updateView = findViewById(R.id.update);
+        updateView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                obtenerDietas();
+            }
+        });
 
         if(getApplicationContext() != null) {
             sesion = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
         }
 
-        drawer = DrawerK.initDrawer(this, DietaActivity.class, toolbar);
+        drawer = DrawerK.initDrawer(this, toolbar);
 
+        obtenerDietas();
+    }
+
+    public void obtenerDietas(){
         final ProgressDialog progressDialog = new ProgressDialog(DietaActivity.this,
-                R.style.Theme_AppCompat_DayNight_Dialog);//AppTheme_Dark_Dialog);
+                R.style.Theme_AppCompat_DayNight_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Actualizando...");
+        progressDialog.setMessage(getString(R.string.updating));
         progressDialog.show();
 
         RequestK.init();
@@ -74,85 +83,86 @@ public class DietaActivity extends AppCompatActivity {
 
                 if(response.isSuccessful()) {
                     List<Dieta> data = response.body();
-
-                    for(Dieta dieta : data){
-
-                        Log.e(TAG, dieta.getId() + " "+ dieta.getCondicionesPrevias()+" "+dieta.getPlanDiario()+"");
-                    }
-                    //Toast.makeText(getApplicationContext(), "Usuario: " + usuario.getUsuario() , Toast.LENGTH_LONG).show();
+                    mostrarDietas(data);
                     progressDialog.dismiss();
-                    //onLoginSuccess();
                 }
                 else{
-                    Log.e(TAG, "Not Succesful " + response.toString() + " " + response.body().toString());
+                    mostrarSinInformacion();
                     progressDialog.dismiss();
                 }
-
-
             }
 
             @Override
             public void onFailure(Call<List<Dieta>> call, Throwable t) {
-                Log.e(TAG, t.toString());
+                mostrarSinInformacion();
                 progressDialog.dismiss();
-
             }
         });
-
-        //expandableListView = (ExpandableListView) findViewById(R.id.simple_expandable_listview);
-        // Setting group indicator null for custom indicator
-        //expandableListView.setGroupIndicator(null);
-
-        //setItems();
-    //setListener();
-        // Setting headers and childs to expandable listview
-
-
     }
-    void setItems(){
 
-        // Array list for header
-        ArrayList<String> header = new ArrayList<String>();
+    private void mostrarDietas(List<Dieta> dietas) {
+        if(dietas == null || dietas.isEmpty()) return;
 
-        // Array list for child items
-        List<String> child1 = new ArrayList<String>();
-        List<String> child2 = new ArrayList<String>();
-        List<String> child3 = new ArrayList<String>();
-        List<String> child4 = new ArrayList<String>();
+        if(expandableView == null) {
 
-        // Hash map for both header and child
-        HashMap<String, List<String>> hashMap = new HashMap<String, List<String>>();
+            for (Dieta dieta : dietas) {
+                LinearLayout parent = (LinearLayout) findViewById(R.id.parent_expandable_id);
+                expandableView = getLayoutInflater().inflate(R.layout.expandable_child_view, null);
+                dietaExpandableView = (ExpandableView) expandableView;
+                planDiarioExpandableView = new ExpandableView(this);
+                diasExpandableView = new ExpandableView(this);
 
-        // Adding headers to list
-        for (int i = 1; i < 5; i++) {
-            header.add("Group " + i);
+                crearDietaExpandableView(dieta);
+                crearPlandDiarioExpandableView(dieta.getPlanDiario());
+                planDiarioExpandableView.setOutsideContentLayout(dietaExpandableView.getContentLayout());
+                diasExpandableView.setOutsideContentLayout(planDiarioExpandableView.getContentLayout());
+
+                parent.addView(expandableView);
+            }
         }
-        // Adding child data
-        for (int i = 1; i < 5; i++) {
-            child1.add("Group 1  " + " : Child" + i);
-        }
-        // Adding child data
-        for (int i = 1; i < 5; i++) {
-            child2.add("Group 2  " + " : Child" + i);
-        }
-        // Adding child data
-        for (int i = 1; i < 6; i++) {
-            child3.add("Group 3  " + " : Child" + i);
-        }
-        // Adding child data
-        for (int i = 1; i < 7; i++) {
-            child4.add("Group 4  " + " : Child" + i);
-        }
+    }
 
-        // Adding header and childs to hash map
-        hashMap.put(header.get(0), child1);
-        hashMap.put(header.get(1), child2);
-        hashMap.put(header.get(2), child3);
-        hashMap.put(header.get(3), child4);
+    public void agregarContentView(ExpandableView view, String[] stringList, boolean showCheckbox) {
 
-        adapter = new ExpandableListAdapter(DietaActivity.this, header, hashMap);
-        // Setting adpater over expandablelistview
-        expandableListView.setAdapter(adapter);
+        for (int i = 0; i < stringList.length; i++) {
+            ExpandedListItemView itemView = new ExpandedListItemView(this);
+            itemView.setText(stringList[i], showCheckbox);
+            view.addContentView(itemView);
+        }
+    }
 
+     private void crearDietaExpandableView(Dieta dieta){
+
+         dietaExpandableView.fillData(0, "Dieta: " + dieta.getId(), true);
+         String[] condiciones = {"Condiciones previas: " + dieta.getCondicionesPrevias()};
+         agregarContentView(dietaExpandableView, condiciones, false);
+         dietaExpandableView.addContentView(planDiarioExpandableView);
+    }
+
+    private void crearPlandDiarioExpandableView(List<PlanDiario> planes) {
+
+        planDiarioExpandableView.setBackgroundResource(android.R.color.background_light);
+        planDiarioExpandableView.fillData(0, "      Plan Diario", false);
+
+        for(PlanDiario plandiario: planes){
+            ExpandableView diaExpandableView = new ExpandableView(this);
+            diaExpandableView.fillData(0, "     "+plandiario.getDia(), false);
+            String[] plan ={"       Desayuno: " + plandiario.getDesayuno(),
+                            "       Colación 1: " + plandiario.getColacion1(),
+                            "       Almuerzo: " + plandiario.getAlmuerzo(),
+                            "       Colación 2: " + plandiario.getColacion2(),
+                            "       Cena: " + plandiario.getCena() };
+
+            agregarContentView(diaExpandableView, plan, false);
+            planDiarioExpandableView.addContentView(diaExpandableView);
+        }
+    }
+
+    public void mostrarSinInformacion(){
+        if(findViewById(R.id.id_sin_informacion) == null) {
+            LinearLayout parent = (LinearLayout) findViewById(R.id.parent_expandable_id);
+            View singleView = getLayoutInflater().inflate(R.layout.no_info_view, null);
+            parent.addView(singleView);
+        }
     }
 }

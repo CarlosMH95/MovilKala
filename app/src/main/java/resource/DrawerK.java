@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.View;
 import android.support.v7.widget.Toolbar;
 
 import com.example.kala.movilkala.CitaActivity;
 import com.example.kala.movilkala.DietaActivity;
-import com.example.kala.movilkala.MainActivity;
 import com.example.kala.movilkala.MensajeActivity;
 import com.example.kala.movilkala.ProgresoActivity;
 import com.example.kala.movilkala.R;
@@ -33,16 +31,10 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 public class DrawerK {
 
-    public static Drawer initDrawer(final Activity activity, final Class activityClass,
-                                    final Toolbar toolbar) {
+    public static Drawer initDrawer(final Activity activity, final Toolbar toolbar) {
 
         SharedPreferences sesion = activity.getApplicationContext()
                 .getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
-
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem()
-                .withIdentifier(1)
-                .withName("Principal")
-                .withIcon(R.drawable.ic_menu_send);
 
         SecondaryDrawerItem item2 = new SecondaryDrawerItem()
                 .withIdentifier(2)
@@ -104,19 +96,13 @@ public class DrawerK {
                 .withToolbar(toolbar)
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
-                .addDrawerItems( item1, new DividerDrawerItem(), item2, item3, item4, item5, item6 )
+                .addDrawerItems( item4, item2, item3, item5, item6 )
                 .addStickyDrawerItems(item7, item8)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    //final Drawer drawer = getClass();
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if(drawerItem.getIdentifier() == 1L){
-                            if(activity.getClass() != MainActivity.class){
-                                activity.startActivity(new Intent(activity, MainActivity.class));
-                                return true;
-                            }
-                        }
-                        else if(drawerItem.getIdentifier() == 2L){
+                        if(drawerItem.getIdentifier() == 2L){
+
                             activity.startActivity(new Intent(activity, RutinaActivity.class));
                                 return true;
                         }
@@ -133,7 +119,7 @@ public class DrawerK {
                             return true;
                         }
                         else if(drawerItem.getIdentifier() == 6L){
-                            activity.startActivity(new Intent(activity, activityClass));
+                            activity.startActivity(new Intent(activity, CitaActivity.class));
                             return true;
                         }
                         else if(drawerItem.getIdentifier() == 7L){

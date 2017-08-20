@@ -53,14 +53,14 @@ public class CitaActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_cita);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitle(R.string.title_activity_citas);
 
 
         if(getApplicationContext() != null) {
             sesion = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
         }
 
-        drawer = DrawerK.initDrawer(this, CitaActivity.class, toolbar);
+        drawer = DrawerK.initDrawer(this, toolbar);
 
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);

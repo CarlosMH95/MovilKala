@@ -20,9 +20,13 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="update">Actualizar</string>
+    <string name="updating">Actualizando...</string>
     <string name="title_activity_citas">Citas</string>
     <string name="title_activity_dietas">Mis dietas</string>
     <string name="title_activity_rutinas">Mis rutinas</string>
     <string name="title_activity_progreso">Mi progreso</string>
     <string name="title_activity_mensajes">Mis mensajes</string>
+    <string name="android_names">Android Version Names</string>
+    <string name="android_codes">Android Version Codes</string>
 </resources>

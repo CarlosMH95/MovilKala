@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ProgresoActivity.class);
         //intent.putExtra("ID", ContactLoggedIn.getContact().getId());
         //intent.putExtra("TYPE", "0");
         startActivity(intent);

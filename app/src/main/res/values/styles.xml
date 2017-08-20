@@ -27,4 +27,8 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
+    <style name="ExpandableView_TextView">
+        <!-- Base style to customize inner TextView inside visible content -->
+    </style>
+
 </resources>
