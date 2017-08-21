@@ -30,6 +30,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
  */
 
 public class DrawerK {
+    public static Drawer drawerInstance = null;
 
     public static Drawer initDrawer(final Activity activity, final Toolbar toolbar) {
 
@@ -91,7 +92,7 @@ public class DrawerK {
                 })
                 .build();
 
-        return new DrawerBuilder()
+        drawerInstance = new DrawerBuilder()
                 .withActivity(activity)
                 .withToolbar(toolbar)
                 .withTranslucentStatusBar(false)
@@ -102,27 +103,33 @@ public class DrawerK {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if(drawerItem.getIdentifier() == 2L){
-
+                            closeDrawer();
                             activity.startActivity(new Intent(activity, RutinaActivity.class));
-                                return true;
+                            return true;
                         }
                         else if(drawerItem.getIdentifier() == 3L){
+                            closeDrawer();
                             activity.startActivity(new Intent(activity, DietaActivity.class));
                             return true;
                         }
                         else if(drawerItem.getIdentifier() == 4L){
+                            closeDrawer();
                             activity.startActivity(new Intent(activity, ProgresoActivity.class));
                             return true;
                         }
                         else if(drawerItem.getIdentifier() == 5L){
+                            closeDrawer();
                             activity.startActivity(new Intent(activity, MensajeActivity.class));
                             return true;
                         }
                         else if(drawerItem.getIdentifier() == 6L){
                             activity.startActivity(new Intent(activity, CitaActivity.class));
+                            if(drawerInstance != null)
+                                drawerInstance.closeDrawer();
                             return true;
                         }
                         else if(drawerItem.getIdentifier() == 7L){
+                            closeDrawer();
                             if(activity.getApplicationContext() != null) {
                                 activity.getApplicationContext().getSharedPreferences("user_sesion",
                                         Context.MODE_PRIVATE).edit().clear().commit();
@@ -140,5 +147,14 @@ public class DrawerK {
                     }
                 })
                 .build();
+        return drawerInstance;
+    }
+
+    public static Drawer getDrawerInstance() {
+        return drawerInstance;
+    }
+    public static void closeDrawer(){
+        if(drawerInstance != null)
+            drawerInstance.closeDrawer();
     }
 }

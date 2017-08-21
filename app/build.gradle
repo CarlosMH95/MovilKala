@@ -34,7 +34,7 @@ dependencies {
     compile 'com.github.alamkanak:android-week-view:1.2.6'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-    //compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
     testCompile 'junit:junit:4.12'
 }

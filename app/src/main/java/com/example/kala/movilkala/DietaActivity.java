@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -39,15 +40,23 @@ public class DietaActivity extends AppCompatActivity {
 
     private RestClient restClient = null;
     SharedPreferences sesion;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_dieta);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.title_activity_dietas);
+        if(getApplicationContext() != null) {
+            sesion = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
+        }
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.title_activity_dietas));
         toolbar.inflateMenu(R.menu.view_update);
+
+        drawer = DrawerK.initDrawer(this, toolbar);
 
         View updateView = findViewById(R.id.update);
         updateView.setOnClickListener(new View.OnClickListener() {
@@ -56,12 +65,6 @@ public class DietaActivity extends AppCompatActivity {
                 obtenerDietas();
             }
         });
-
-        if(getApplicationContext() != null) {
-            sesion = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
-        }
-
-        drawer = DrawerK.initDrawer(this, toolbar);
 
         obtenerDietas();
     }
