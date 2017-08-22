@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kala.movilkala.ProgresoActivity">
+    tools:context="com.example.kala.movilkala.ProgresoActivity"
+    android:orientation="vertical"
+    android:id="@+id/progreso_layout">
 
     <include layout="@layout/toolbar" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <org.angmarch.views.NiceSpinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nice_spinner"
+        android:ellipsize="marquee"
+        android:paddingBottom="@dimen/one_and_a_half_grid_unit"
+        android:paddingTop="@dimen/one_and_a_half_grid_unit"
+        android:maxLines="1"
+        android:textSize="18sp"
+        tools:text=""/>
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp" />
+
+
+
+</LinearLayout>

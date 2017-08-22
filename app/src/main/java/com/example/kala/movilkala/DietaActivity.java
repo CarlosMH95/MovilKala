@@ -31,7 +31,7 @@ import service.RestClient;
  */
 
 public class DietaActivity extends AppCompatActivity {
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
     private Drawer drawer = null;
     private View expandableView = null;
     private ExpandableView dietaExpandableView;

@@ -3,6 +3,7 @@ package service;
 import java.util.List;
 
 import models.Dieta;
+import models.FichaFis;
 import models.Rutina;
 import models.Token;
 import models.Usuario;
@@ -33,4 +34,7 @@ public interface RestClient {
 
     @GET("rutinas/{cedula}/")
     Call<List<Rutina>> getRutinas(@Path("cedula") String cedula);
+
+    @GET("fichas/fisioterapia/{cedula}/")
+    Call<List<FichaFis>> getFichasFis(@Path("cedula") String cedula);
 }
