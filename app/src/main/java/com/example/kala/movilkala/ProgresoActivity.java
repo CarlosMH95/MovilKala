@@ -23,9 +23,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import lecho.lib.hellocharts.formatter.AxisValueFormatter;
+import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
+import lecho.lib.hellocharts.formatter.SimpleLineChartValueFormatter;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
@@ -42,13 +46,15 @@ import service.RestClient;
  * Created by HouSe on 17/08/2017.
  */
 
-public class ProgresoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class ProgresoActivity extends AppCompatActivity {
 
     public final String TAG = getClass().getSimpleName();
     private SharedPreferences sesion;
     private Drawer drawer;
     private RestClient restClient;
     private List<FichaFis> fichas = null;
+    private NiceSpinner niceSpinner = null;
+    AdapterView.OnItemSelectedListener onItemSelectedListener = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,12 +79,23 @@ public class ProgresoActivity extends AppCompatActivity implements AdapterView.O
 
         drawer = DrawerK.initDrawer(this, toolbar);
 
-        NiceSpinner niceSpinner = (NiceSpinner) findViewById(R.id.nice_spinner);
+        niceSpinner = (NiceSpinner) findViewById(R.id.nice_spinner);
         List<String> dataset = new LinkedList<>(Arrays.asList("Peso", "Indice de masa corporal (IMC)",
                 "Porcentaje de músculo", "Grasa visceral", "Porcentaje grasa total"));
+        niceSpinner.setTintColor(getResources().getColor(R.color.colorPrimary));
         niceSpinner.attachDataSource(dataset);
-        niceSpinner.setTintColor(R.color.colorPrimary);
-        niceSpinner.setOnItemSelectedListener(this);
+
+        onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                graficar(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        };
+        niceSpinner.setOnItemSelectedListener(onItemSelectedListener);
 
         obtenerFichas();
     }
@@ -100,11 +117,13 @@ public class ProgresoActivity extends AppCompatActivity implements AdapterView.O
                 if(response.isSuccessful()) {
                     List<FichaFis> data = response.body();
                     fichas = data;
+                    if(niceSpinner != null){
+                        graficar(niceSpinner.getSelectedIndex());
+                    }
                     progressDialog.dismiss();
                 }
                 else{
                     mostrarSinInformacion();
-                    //Log.e(TAG, "Fichaerroe2: "+response.code());
                     progressDialog.dismiss();
                 }
             }
@@ -112,7 +131,6 @@ public class ProgresoActivity extends AppCompatActivity implements AdapterView.O
             @Override
             public void onFailure(Call<List<FichaFis>> call, Throwable t) {
                 mostrarSinInformacion();
-                //Log.e(TAG, "Fichaerroe1: "+t.toString()  + " ");
                 progressDialog.dismiss();
             }
         });
@@ -131,35 +149,59 @@ public class ProgresoActivity extends AppCompatActivity implements AdapterView.O
 
         List<PointValue> values = new ArrayList<PointValue>();
         LineChartData data = new LineChartData();
-        Axis axisX = new Axis().setTextSize(16).setTextColor(getResources().getColor(R.color.colorAccent));
-        Axis axisY = new Axis().setHasLines(true).setTextSize(16).setTextColor(getResources().getColor(R.color.colorAccent));;
+        List<AxisValue> axisValues = new ArrayList<>();
+
+        for(int index = 0; index < fichas.size(); index++)
+            axisValues.add(new AxisValue(index).setLabel("d" + (index + 1) ));
+
+
+        AxisValueFormatter formatter = new SimpleAxisValueFormatter(0);
+        Axis axisX = new Axis(axisValues)
+                .setName("Diagnósticos")
+                .setTextSize(18)
+                .setFormatter(formatter)
+                .setTextColor(getResources().getColor(R.color.colorAccent));
+        Axis axisY = new Axis()
+                .setHasLines(true)
+                .setTextSize(18)
+                .setTextColor(getResources().getColor(R.color.colorAccent));
 
         try {
             for (int index = 0; index < fichas.size(); index++) {
                 switch (item) {
                     case 0: {
-                        values.add(new PointValue(index, Float.parseFloat(fichas.get(index).getPeso())));
-                        axisY.setName("Peso");
+                        PointValue point = new PointValue(index, Float.parseFloat(fichas.get(index).getPeso()));
+                        point.setLabel(fichas.get(index).getPeso() + "Kg   ("+fichas.get(index).getCreado().substring(0,10) + ")");
+                        values.add(point);
+                        axisY.setName("Peso (Kg)");
                         break;
                     }
                     case 1: {
-                        values.add(new PointValue(index, Float.parseFloat(fichas.get(index).getImc())));
+                        PointValue point = new PointValue(index, Float.parseFloat(fichas.get(index).getImc()));
+                        point.setLabel(fichas.get(index).getImc() + "   ("+fichas.get(index).getCreado().substring(0,10) + ")");
+                        values.add(point);
                         axisY.setName("Indice de masa corporal");
                         break;
                     }
                     case 2: {
-                        values.add(new PointValue(index, Float.parseFloat(fichas.get(index).getMusculo())));
-                        axisY.setName("Porcentaje de Músculo");
+                        PointValue point = new PointValue(index, Float.parseFloat(fichas.get(index).getMusculo()));
+                        point.setLabel(fichas.get(index).getMusculo() + "%   ("+fichas.get(index).getCreado().substring(0,10) + ")");
+                        values.add(point);
+                        axisY.setName("Porcentaje de Músculo (%)");
                         break;
                     }
                     case 3: {
-                        values.add(new PointValue(index, Float.parseFloat(fichas.get(index).getGrasaVisceral())));
-                        axisY.setName("Grasa Visceral");
+                        PointValue point = new PointValue(index, Float.parseFloat(fichas.get(index).getGrasaVisceral()));
+                        point.setLabel(fichas.get(index).getGrasaVisceral() + "%   ("+fichas.get(index).getCreado().substring(0,10) + ")");
+                        values.add(point);
+                        axisY.setName("Grasa Visceral (%)");
                         break;
                     }
                     case 4: {
-                        values.add(new PointValue(index, Float.parseFloat(fichas.get(index).getGrasaPorcentaje())));
-                        axisY.setName("Porcentaje de grasa corporal");
+                        PointValue point = new PointValue(index, Float.parseFloat(fichas.get(index).getGrasaPorcentaje()));
+                        point.setLabel(fichas.get(index).getGrasaPorcentaje() + "%   ("+fichas.get(index).getCreado().substring(0,10) + ")");
+                        values.add(point);
+                        axisY.setName("Porcentaje de grasa corporal (%)");
                         break;
                     }
                     default:
@@ -169,9 +211,14 @@ public class ProgresoActivity extends AppCompatActivity implements AdapterView.O
         }
         catch (Exception e){}
 
-        Line line = new Line(values).setColor(getResources().getColor(R.color.colorPrimaryDark)).setCubic(true);
+        Line line = new Line(values)
+                .setColor(getResources()
+                        .getColor(R.color.colorPrimaryDark))
+                .setCubic(true);
         List<Line> lines = new ArrayList<Line>();
         line.setFilled(true);
+        line.setAreaTransparency(50);
+        line.setHasLabels(true);
         lines.add(line);
 
         data.setAxisXBottom(axisX);
@@ -181,33 +228,6 @@ public class ProgresoActivity extends AppCompatActivity implements AdapterView.O
         LineChartView chart = findViewById(R.id.chart);
         chart.setZoomEnabled(true);
         chart.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
-        chart.setOnValueTouchListener(new ValueTouchListener());
         chart.setLineChartData(data);
-
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        graficar(i);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-    }
-
-    private class ValueTouchListener implements LineChartOnValueSelectListener {
-
-        @Override
-        public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
-            Toast.makeText(getApplicationContext(), String.valueOf(value.getY()), Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onValueDeselected() {
-            // TODO Auto-generated method stub
-
-        }
-
     }
 }
