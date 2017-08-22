@@ -25,7 +25,7 @@ import models.Rutina;
 import models.PlanDiario;
 import models.Rutina;
 import resource.DrawerK;
-import resource.ExpandableListAdapter;
+
 import resource.ExpandableView;
 import resource.ExpandedListItemView;
 import retrofit2.Call;
