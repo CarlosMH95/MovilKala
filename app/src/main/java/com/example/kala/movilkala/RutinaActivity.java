@@ -8,7 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 
 import com.mikepenz.materialdrawer.Drawer;
 
@@ -17,9 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 
 //import models.Dieta;
+import models.Dieta;
+import models.Subrutina;
+import models.Rutina;
+import models.PlanDiario;
 import models.Rutina;
 import resource.DrawerK;
 import resource.ExpandableListAdapter;
+import resource.ExpandableView;
+import resource.ExpandedListItemView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,9 +42,10 @@ public class RutinaActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
     private Drawer drawer = null;
-
-    private ExpandableListView expandableListView;
-    private ExpandableListAdapter adapter;
+    private View expandableView = null;
+    private ExpandableView rutinaExpandableView;
+    private ExpandableView subrutinaExpandableView;
+    private ExpandableView ejerciciosExpandableView;
 
     private RestClient restClient = null;
     SharedPreferences sesion;
@@ -44,22 +53,34 @@ public class RutinaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dieta);
+        setContentView(R.layout.activity_rutina);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitle(R.string.title_activity_rutinas);
+        toolbar.inflateMenu(R.menu.view_update);
 
+        View updateView = findViewById(R.id.update);
+        updateView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                obtenerRutinas();
+            }
+        });
 
         if(getApplicationContext() != null) {
             sesion = getApplicationContext().getSharedPreferences("user_sesion", Context.MODE_PRIVATE);
         }
 
-        drawer = DrawerK.initDrawer(this, RutinaActivity.class, toolbar);
+        drawer = DrawerK.initDrawer(this, toolbar);
 
+        obtenerRutinas();
+    }
+
+    public void obtenerRutinas(){
         final ProgressDialog progressDialog = new ProgressDialog(RutinaActivity.this,
-                R.style.Theme_AppCompat_DayNight_Dialog);//AppTheme_Dark_Dialog);
+                R.style.Theme_AppCompat_DayNight_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Actualizando...");
+        progressDialog.setMessage(getString(R.string.updating));
         progressDialog.show();
 
         RequestK.init();
@@ -72,85 +93,87 @@ public class RutinaActivity extends AppCompatActivity {
 
                 if(response.isSuccessful()) {
                     List<Rutina> data = response.body();
-
-                    for(Rutina rutina : data){
-
-                        Log.e(TAG, rutina.getId() + " "+ rutina.getCondicionesPrevias()+" "+rutina.getSubrutina()+"");
-                    }
-                    //Toast.makeText(getApplicationContext(), "Usuario: " + usuario.getUsuario() , Toast.LENGTH_LONG).show();
+                    mostrarRutinas(data);
                     progressDialog.dismiss();
-                    //onLoginSuccess();
                 }
                 else{
-                    Log.e(TAG, "Not Succesful " + response.toString() + " " + response.body().toString());
+                    mostrarSinInformacion();
                     progressDialog.dismiss();
                 }
-
-
             }
 
             @Override
             public void onFailure(Call<List<Rutina>> call, Throwable t) {
-                Log.e(TAG, t.toString());
+                mostrarSinInformacion();
                 progressDialog.dismiss();
-
             }
         });
-
-        //expandableListView = (ExpandableListView) findViewById(R.id.simple_expandable_listview);
-        // Setting group indicator null for custom indicator
-        //expandableListView.setGroupIndicator(null);
-
-        //setItems();
-        //setListener();
-        // Setting headers and childs to expandable listview
-
-
     }
-    void setItems(){
 
-        // Array list for header
-        ArrayList<String> header = new ArrayList<String>();
+    private void mostrarRutinas(List<Rutina> rutinas) {
+        if(rutinas == null || rutinas.isEmpty()) return;
 
-        // Array list for child items
-        List<String> child1 = new ArrayList<String>();
-        List<String> child2 = new ArrayList<String>();
-        List<String> child3 = new ArrayList<String>();
-        List<String> child4 = new ArrayList<String>();
+        if(expandableView == null) {
 
-        // Hash map for both header and child
-        HashMap<String, List<String>> hashMap = new HashMap<String, List<String>>();
+            for (Rutina rutina : rutinas) {
+                LinearLayout parent = (LinearLayout) findViewById(R.id.parent_expandable_id);
+                expandableView = getLayoutInflater().inflate(R.layout.expandable_child_view, null);
+                rutinaExpandableView = (ExpandableView) expandableView;
+                subrutinaExpandableView = new ExpandableView(this);
+                ejerciciosExpandableView = new ExpandableView(this);
 
-        // Adding headers to list
-        for (int i = 1; i < 5; i++) {
-            header.add("Group " + i);
+                crearRutinaExpandableView(rutina);
+                crearSubrutinaExpandableView(rutina.getSubrutina());
+                subrutinaExpandableView.setOutsideContentLayout(rutinaExpandableView.getContentLayout());
+                ejerciciosExpandableView.setOutsideContentLayout(subrutinaExpandableView.getContentLayout());
+
+                parent.addView(expandableView);
+            }
         }
-        // Adding child data
-        for (int i = 1; i < 5; i++) {
-            child1.add("Group 1  " + " : Child" + i);
-        }
-        // Adding child data
-        for (int i = 1; i < 5; i++) {
-            child2.add("Group 2  " + " : Child" + i);
-        }
-        // Adding child data
-        for (int i = 1; i < 6; i++) {
-            child3.add("Group 3  " + " : Child" + i);
-        }
-        // Adding child data
-        for (int i = 1; i < 7; i++) {
-            child4.add("Group 4  " + " : Child" + i);
-        }
+    }
 
-        // Adding header and childs to hash map
-        hashMap.put(header.get(0), child1);
-        hashMap.put(header.get(1), child2);
-        hashMap.put(header.get(2), child3);
-        hashMap.put(header.get(3), child4);
+    public void agregarContentView(ExpandableView view, String[] stringList, boolean showCheckbox) {
 
-        adapter = new ExpandableListAdapter(RutinaActivity.this, header, hashMap);
-        // Setting adpater over expandablelistview
-        expandableListView.setAdapter(adapter);
+        for (int i = 0; i < stringList.length; i++) {
+            ExpandedListItemView itemView = new ExpandedListItemView(this);
+            itemView.setText(stringList[i], showCheckbox);
+            view.addContentView(itemView);
+        }
+    }
 
+    private void crearRutinaExpandableView(Rutina rutina){
+
+
+        rutinaExpandableView.fillData(0, "Rutina: " + rutina.getId(), true);
+        String[] condiciones = {"Condiciones previas: " + rutina.getCondicionesPrevias()};
+        agregarContentView(rutinaExpandableView, condiciones, false);
+        rutinaExpandableView.addContentView(subrutinaExpandableView);
+    }
+
+    private void crearSubrutinaExpandableView(List<Subrutina> planes) {
+
+        subrutinaExpandableView.setBackgroundResource(android.R.color.background_light);
+        subrutinaExpandableView.fillData(0, "       Ejercicios", false);
+
+        for(Subrutina subrutina: planes){
+            ExpandableView ejerciciosExpandableView = new ExpandableView(this);
+            ejerciciosExpandableView.fillData(0, "     "+subrutina.getNombre(), false);
+            String[] plan ={"       Detalles: " + subrutina.getDetalle(),
+                    "       Sets: " + subrutina.getVeces(),
+                    "       Repeticiones: " + subrutina.getRepeticiones(),
+                    "       Descanso entre sets: " + subrutina.getDescanso(),
+                    "       Link de video Ayuda: " + subrutina.getLink() };
+
+            agregarContentView(ejerciciosExpandableView, plan, false);
+            subrutinaExpandableView.addContentView(ejerciciosExpandableView);
+        }
+    }
+
+    public void mostrarSinInformacion(){
+        if(findViewById(R.id.id_sin_informacion) == null) {
+            LinearLayout parent = (LinearLayout) findViewById(R.id.parent_expandable_id);
+            View singleView = getLayoutInflater().inflate(R.layout.no_info_view, null);
+            parent.addView(singleView);
+        }
     }
 }
