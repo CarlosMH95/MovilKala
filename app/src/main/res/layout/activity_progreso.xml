@@ -27,7 +27,9 @@
             android:paddingTop="@dimen/one_and_a_half_grid_unit"
             android:maxLines="1"
             android:textSize="18sp"
-            tools:text=""/>
+            app:textTint="@color/colorAccent"
+            app:arrowTint="@color/colorAccent"
+            app:dropDownListPaddingBottom="-50dp"/>
 
 
     </LinearLayout>

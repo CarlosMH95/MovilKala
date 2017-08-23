@@ -127,15 +127,12 @@ public class LoginActivity extends AppCompatActivity {
                                     progressDialog.dismiss();
                                     onLoginFailed();
                                 }
-
-
                             }
 
                             @Override
                             public void onFailure(Call<Usuario> call, Throwable t) {
                                 progressDialog.dismiss();
                                 onLoginFailed();
-
                             }
                         });
 

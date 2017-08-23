@@ -40,27 +40,29 @@ public class DrawerK {
         SecondaryDrawerItem item2 = new SecondaryDrawerItem()
                 .withIdentifier(2)
                 .withName("Mis Rutinas")
-                .withIcon(R.drawable.ic_menu_camera);
+                .withIcon(R.drawable.ic_rutina);
 
         SecondaryDrawerItem item3 = new SecondaryDrawerItem()
                 .withIdentifier(3)
                 .withName("Mis Dietas")
-                .withIcon(R.drawable.ic_menu_manage);
+                .withIcon(R.drawable.ic_dieta);
 
         SecondaryDrawerItem item4 = new SecondaryDrawerItem()
                 .withIdentifier(4)
                 .withName("Mis Progreso")
-                .withIcon(R.drawable.ic_menu_gallery);
+                .withIcon(R.drawable.ic_linechart);
 
         SecondaryDrawerItem item5 = new SecondaryDrawerItem()
                 .withIdentifier(5)
                 .withName("Mis Mensajes")
-                .withIcon(R.drawable.ic_menu_slideshow);
+                .withIcon(R.drawable.ic_sms)
+                .withEnabled(false);
 
         SecondaryDrawerItem item6 = new SecondaryDrawerItem()
                 .withIdentifier(6)
                 .withName("Separar cita")
-                .withIcon(R.drawable.material_drawer_badge);
+                .withIcon(R.drawable.ic_cita)
+                .withEnabled(false);
 
         PrimaryDrawerItem item7 = new PrimaryDrawerItem()
                 .withName("Cerrar sesión")
