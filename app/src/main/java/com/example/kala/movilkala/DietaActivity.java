@@ -117,6 +117,7 @@ public class DietaActivity extends AppCompatActivity {
 
                 crearDietaExpandableView(dieta);
                 crearPlandDiarioExpandableView(dieta.getPlanDiario());
+
                 planDiarioExpandableView.setOutsideContentLayout(dietaExpandableView.getContentLayout());
                 diasExpandableView.setOutsideContentLayout(planDiarioExpandableView.getContentLayout());
 
@@ -137,6 +138,7 @@ public class DietaActivity extends AppCompatActivity {
      private void crearDietaExpandableView(Dieta dieta){
 
          dietaExpandableView.fillData(0, "Dieta: " + dieta.getId(), true);
+         dietaExpandableView.getTextView().setTextColor(getResources().getColor(R.color.colorAccent));
          String[] condiciones = {"Condiciones previas: " + dieta.getCondicionesPrevias()};
          agregarContentView(dietaExpandableView, condiciones, false);
          dietaExpandableView.addContentView(planDiarioExpandableView);
@@ -144,18 +146,17 @@ public class DietaActivity extends AppCompatActivity {
 
     private void crearPlandDiarioExpandableView(List<PlanDiario> planes) {
 
-        planDiarioExpandableView.setBackgroundResource(android.R.color.background_light);
-        planDiarioExpandableView.fillData(0, "      Plan Diario", false);
+        planDiarioExpandableView.setBackgroundResource(R.color.light_gray);
+        planDiarioExpandableView.fillData(0, "    Plan Diario", false);
 
         for(PlanDiario plandiario: planes){
             ExpandableView diaExpandableView = new ExpandableView(this);
-            diaExpandableView.fillData(0, "     "+plandiario.getDia(), false);
+            diaExpandableView.fillData(0, "         "+plandiario.getDia(), false);
             String[] plan ={"       Desayuno: " + plandiario.getDesayuno(),
                             "       Colación 1: " + plandiario.getColacion1(),
                             "       Almuerzo: " + plandiario.getAlmuerzo(),
                             "       Colación 2: " + plandiario.getColacion2(),
                             "       Cena: " + plandiario.getCena() };
-
             agregarContentView(diaExpandableView, plan, false);
             planDiarioExpandableView.addContentView(diaExpandableView);
         }

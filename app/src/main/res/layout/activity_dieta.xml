@@ -9,17 +9,25 @@
 
     <include layout="@layout/toolbar" />
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/parent_expandable_id"
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        </LinearLayout>
-    </ScrollView>
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/parent_expandable_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
 
 
 </LinearLayout>

@@ -144,6 +144,7 @@ public class RutinaActivity extends AppCompatActivity {
 
 
         rutinaExpandableView.fillData(0, "Rutina: " + rutina.getId(), true);
+        rutinaExpandableView.getTextView().setTextColor(getResources().getColor(R.color.colorAccent));
         String[] condiciones = {"Condiciones previas: " + rutina.getCondicionesPrevias()};
         agregarContentView(rutinaExpandableView, condiciones, false);
         rutinaExpandableView.addContentView(subrutinaExpandableView);

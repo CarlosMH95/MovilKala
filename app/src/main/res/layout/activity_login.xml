@@ -33,8 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Cédula"
-                android:inputType="text"
-                android:text="7777777779" />
+                android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -49,8 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
-                android:inputType="textPassword"
-                android:text="2wHKDq" />
+                android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton
@@ -60,7 +58,9 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:text="Autenticar"/>
+            android:text="Autenticar"
+            android:textColor="@color/light_gray"
+            android:backgroundTint="@color/colorAccent"/>
 
     </LinearLayout>
 </ScrollView>
