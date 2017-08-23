@@ -24,15 +24,8 @@ public class RequestK {
         if(builder == null) {
             builder = new Retrofit.Builder()
                     .baseUrl(BASE_URL_PROD)
-                    //.addConverterFactory(ScalarsConverterFactory.create());
                     .addConverterFactory(GsonConverterFactory.create());
-
         }
-
-        /*if (retrofit == null) {
-            retrofit = builder.build();
-            return retrofit;
-        }*/
     }
 
     public static <S> S createService(Class<S> serviceClass) {
@@ -42,10 +35,9 @@ public class RequestK {
     public static <S> S createService( Class<S> serviceClass, String username, String password) {
         if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)) {
             String auth = Credentials.basic(username, password);
-            Log.e(TAG, "auth: "+ auth);
             return createService(serviceClass, auth, true);
         }
-        return null; //createService(serviceClass, null, null);
+        return null;
     }
 
     public static <S> S createService( Class<S> serviceClass, final String auth, boolean withCredentials) {
@@ -57,8 +49,6 @@ public class RequestK {
 
                 builder.client(httpClient.build());
                 retrofit = builder.build();
-
-                Log.e(TAG, "Creating service " + auth);
             }
         }
         return retrofit.create(serviceClass);

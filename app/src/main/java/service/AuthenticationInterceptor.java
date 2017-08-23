@@ -1,7 +1,5 @@
 package service;
 
-import android.util.Log;
-
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -26,10 +24,7 @@ public class AuthenticationInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
         String type = (withCredentials) ? "" : "Token ";
-        Request.Builder builder = original.newBuilder()
-                .header("Authorization", type + auth);
-        Log.e("AuthInterceptor", "Authorization " + type + auth);
-
+        Request.Builder builder = original.newBuilder().header("Authorization", type + auth);
         Request request = builder.build();
         return chain.proceed(request);
     }
