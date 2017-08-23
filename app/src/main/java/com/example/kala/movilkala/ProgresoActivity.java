@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -55,6 +56,7 @@ public class ProgresoActivity extends AppCompatActivity {
     private List<FichaFis> fichas = null;
     private NiceSpinner niceSpinner = null;
     AdapterView.OnItemSelectedListener onItemSelectedListener = null;
+    private View chartView = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,6 +119,7 @@ public class ProgresoActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     List<FichaFis> data = response.body();
                     fichas = data;
+                    initChartView();
                     if(niceSpinner != null){
                         graficar(niceSpinner.getSelectedIndex());
                     }
@@ -124,6 +127,7 @@ public class ProgresoActivity extends AppCompatActivity {
                 }
                 else{
                     mostrarSinInformacion();
+                    Log.e(TAG, "Fichaerroe2: "+response.code());
                     progressDialog.dismiss();
                 }
             }
@@ -131,6 +135,7 @@ public class ProgresoActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<FichaFis>> call, Throwable t) {
                 mostrarSinInformacion();
+                Log.e(TAG, "Fichaerroe1: "+t.toString()  + " ");
                 progressDialog.dismiss();
             }
         });
@@ -138,7 +143,7 @@ public class ProgresoActivity extends AppCompatActivity {
 
     public void mostrarSinInformacion(){
         if(findViewById(R.id.id_sin_informacion) == null) {
-            LinearLayout parent = (LinearLayout) findViewById(R.id.parent_expandable_id);
+            LinearLayout parent = (LinearLayout) findViewById(R.id.parent_chart_id);
             View singleView = getLayoutInflater().inflate(R.layout.no_info_view, null);
             parent.addView(singleView);
         }
@@ -229,5 +234,12 @@ public class ProgresoActivity extends AppCompatActivity {
         chart.setZoomEnabled(true);
         chart.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
         chart.setLineChartData(data);
+    }
+    public void initChartView(){
+        if(chartView == null) {
+            LinearLayout parent = (LinearLayout) findViewById(R.id.parent_chart_id);
+            chartView = getLayoutInflater().inflate(R.layout.line_view_chart, null);
+            parent.addView(chartView);
+        }
     }
 }
